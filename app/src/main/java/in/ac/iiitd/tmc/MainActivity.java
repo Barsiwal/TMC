@@ -3,6 +3,9 @@ package in.ac.iiitd.tmc;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -29,11 +32,24 @@ public class MainActivity extends Activity {
     private String encryptedFileName = "Enc_File.txt";
     private static String algorithm = "AES";
     static SecretKey yourKey = null;
-
+    Button encrypt,decrypt,showtext;
+    EditText enter;
+    TextView show;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        encrypt=(Button) findViewById(R.id.button);
+        decrypt=(Button) findViewById(R.id.button2);
+        showtext=(Button) findViewById(R.id.button3);
+        enter = (EditText) findViewById(R.id.editText);
+        show = (TextView) findViewById((R.id.textView));
+        if(enter.getText().equals("")){
+
+        }
+        else{
+            
+        }
 
         saveFile("Hello From CoderzHeaven asaksjalksjals");
         decodeFile();
