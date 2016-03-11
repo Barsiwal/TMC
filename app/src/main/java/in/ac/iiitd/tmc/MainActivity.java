@@ -37,10 +37,11 @@ public class MainActivity extends Activity {
 
     private String encryptedFileName = "Enc_File.txt";
     private static String algorithm = "AES";
+    public static  byte[] mydata;
     static SecretKey yourKey = null;
     Button encrypt, decrypt, showtext;
     EditText enter;
-    TextView show;
+    TextView show,show2;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -53,15 +54,20 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         encrypt = (Button) findViewById(R.id.button);
         decrypt = (Button) findViewById(R.id.button2);
-        showtext = (Button) findViewById(R.id.button3);
+
         enter = (EditText) findViewById(R.id.editText);
         show = (TextView) findViewById((R.id.textView));
+        show2 = (TextView) findViewById((R.id.textView2));
         encrypt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String inp = String.valueOf(enter.getText());
                 if (inp != null && !inp.isEmpty()) {
-                    saveFile(String.valueOf(enter.getText()));
+                    try {
+                        show.setText(encodeFile(inp.getBytes()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } else {
 
                 }
@@ -72,7 +78,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 String inp = String.valueOf(enter.getText());
                 if (inp != null && !inp.isEmpty())  {
-                        show.setText(decodeFile());
+                        show2.setText(decodetheFile());
                 } else {
 
                 }
@@ -113,8 +119,10 @@ public class MainActivity extends Activity {
         return yourKey;
     }
 
-    public static byte[] encodeFile(SecretKey yourKey, byte[] fileData)
+
+    public static String encodeFile( byte[] fileData)
             throws Exception {
+        yourKey = generateKey();
         byte[] encrypted = null;
         byte[] data = yourKey.getEncoded();
         SecretKeySpec skeySpec = new SecretKeySpec(data, 0, data.length,
@@ -123,7 +131,8 @@ public class MainActivity extends Activity {
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec, new IvParameterSpec(
                 new byte[cipher.getBlockSize()]));
         encrypted = cipher.doFinal(fileData);
-        return encrypted;
+        mydata = encrypted;
+        return Utils.byteArrayToHexString(encrypted);
     }
 
     public static byte[] decodeFile(SecretKey yourKey, byte[] fileData)
@@ -135,7 +144,7 @@ public class MainActivity extends Activity {
         decrypted = cipher.doFinal(fileData);
         return decrypted;
     }
-
+/*
     void saveFile(String stringToSave) {
         try {
             File file = new File(Environment.getExternalStorageDirectory()
@@ -154,12 +163,12 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    String decodeFile() {
+    String decodetheFile() {
 
         try {
-            byte[] decodedData = decodeFile(yourKey, readFile());
+            byte[] decodedData = decodeFile(yourKey, mydata);
             String str = new String(decodedData);
             System.out.println("DECODED FILE CONTENTS : " + str);
             return str;
@@ -169,27 +178,7 @@ public class MainActivity extends Activity {
         return null;
     }
 
-    public byte[] readFile() {
-        byte[] contents = null;
 
-        File file = new File(Environment.getExternalStorageDirectory()
-                + File.separator, encryptedFileName);
-        int size = (int) file.length();
-        contents = new byte[size];
-        try {
-            BufferedInputStream buf = new BufferedInputStream(
-                    new FileInputStream(file));
-            try {
-                buf.read(contents);
-                buf.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return contents;
-    }
 
     @Override
     public void onStart() {
@@ -230,4 +219,50 @@ public class MainActivity extends Activity {
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
     }
+
+    public byte[] readFile() {
+        byte[] contents = null;
+
+        File file = new File(Environment.getExternalStorageDirectory()
+                + File.separator, encryptedFileName);
+        int size = (int) file.length();
+        contents = new byte[size];
+        try {
+            BufferedInputStream buf = new BufferedInputStream(
+                    new FileInputStream(file));
+            try {
+                buf.read(contents);
+                buf.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return contents;
+    }
+
+}
+
+
+ class Utils {
+
+    public static String scrape(String resp, String start, String stop) {
+        int offset, len;
+        if ((offset = resp.indexOf(start)) < 0)
+            return "";
+        if ((len = resp.indexOf(stop, offset + start.length())) < 0)
+            return "";
+        return resp.substring(offset + start.length(), len);
+    }
+     public static String byteArrayToHexString(byte[] array) {
+         StringBuffer hexString = new StringBuffer();
+         for (byte b : array) {
+             int intVal = b & 0xff;
+             if (intVal < 0x10)
+                 hexString.append("0");
+             hexString.append(Integer.toHexString(intVal));
+         }
+         return hexString.toString();
+     }
 }
