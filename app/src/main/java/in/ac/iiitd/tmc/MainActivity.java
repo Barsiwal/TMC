@@ -1,11 +1,17 @@
 package in.ac.iiitd.tmc;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -32,28 +38,51 @@ public class MainActivity extends Activity {
     private String encryptedFileName = "Enc_File.txt";
     private static String algorithm = "AES";
     static SecretKey yourKey = null;
-    Button encrypt,decrypt,showtext;
+    Button encrypt, decrypt, showtext;
     EditText enter;
     TextView show;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        encrypt=(Button) findViewById(R.id.button);
-        decrypt=(Button) findViewById(R.id.button2);
-        showtext=(Button) findViewById(R.id.button3);
+        encrypt = (Button) findViewById(R.id.button);
+        decrypt = (Button) findViewById(R.id.button2);
+        showtext = (Button) findViewById(R.id.button3);
         enter = (EditText) findViewById(R.id.editText);
         show = (TextView) findViewById((R.id.textView));
-        if(enter.getText().equals("")){
+        encrypt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (enter.getText().equals("")) {
 
-        }
-        else{
-            
-        }
+                } else {
+                    saveFile(String.valueOf(enter.getText()));
+                }
+            }
+        });
+        decrypt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (enter.getText().equals("")) {
 
-        saveFile("Hello From CoderzHeaven asaksjalksjals");
-        decodeFile();
+                } else {
+                    decodeFile();
+                }
+            }
+        });
 
+
+
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     public static SecretKey generateKey(char[] passphraseOrPin, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -158,4 +187,43 @@ public class MainActivity extends Activity {
         return contents;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://in.ac.iiitd.tmc/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://in.ac.iiitd.tmc/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
 }
