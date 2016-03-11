@@ -59,20 +59,22 @@ public class MainActivity extends Activity {
         encrypt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (enter.getText().equals("")) {
-
-                } else {
+                String inp = String.valueOf(enter.getText());
+                if (inp != null && !inp.isEmpty()) {
                     saveFile(String.valueOf(enter.getText()));
+                } else {
+
                 }
             }
         });
         decrypt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (enter.getText().equals("")) {
-
+                String inp = String.valueOf(enter.getText());
+                if (inp != null && !inp.isEmpty())  {
+                        show.setText(decodeFile());
                 } else {
-                    decodeFile();
+
                 }
             }
         });
@@ -154,15 +156,17 @@ public class MainActivity extends Activity {
         }
     }
 
-    void decodeFile() {
+    String decodeFile() {
 
         try {
             byte[] decodedData = decodeFile(yourKey, readFile());
             String str = new String(decodedData);
             System.out.println("DECODED FILE CONTENTS : " + str);
+            return str;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public byte[] readFile() {
